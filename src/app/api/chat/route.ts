@@ -1,11 +1,11 @@
 import { streamText } from "ai"
-import { openai } from "@ai-sdk/openai"
+import { anthropic } from "@ai-sdk/anthropic"
 
 export async function POST(req: Request) {
   const { messages } = await req.json()
 
   const result = await streamText({
-    model: openai("gpt-4o"),
+    model: anthropic("claude-3-5-sonnet-20241022"),
     system: `You are LeekBot, a helpful and enthusiastic AI assistant for LeekShop, a meme-themed online store that sells leeks and leek-related products. 
 
 Your personality:
