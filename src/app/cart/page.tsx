@@ -6,11 +6,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
+import { toast } from "@/hooks/use-toast"
 import Image from "next/image"
 import Link from "next/link"
 
 export default function CartPage() {
-  const { items, updateQuantity, removeItem, total } = useCart()
+  const { items, updateQuantity, removeItem, getTotal } = useCart()
+  const total = getTotal()
+
+  const handleQuantityUpdate = (id: number, newQuantity: number, itemName: string) => {
+    updateQuantity(id, newQuantity)
+    if (newQuantity === 0) {
+      toast({
+        title: "Item removed",
+        description: `${itemName} has been removed from your cart.`,
+      })
+    } else {
+      toast({
+        title: "Quantity updated",
+        description: `${itemName} quantity updated to ${newQuantity}.`,
+      })
+    }
+  }
+
+  const handleRemoveItem = (id: number, itemName: string) => {
+    removeItem(id)
+    toast({
+      title: "Item removed",
+      description: `${itemName} has been removed from your cart.`,
+    })
+  }
 
   if (items.length === 0) {
     return (
@@ -41,13 +66,15 @@ export default function CartPage() {
               <Card key={item.id}>
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
-                    <Image
-                      src={item.image || "/placeholder.svg"}
-                      alt={item.name}
-                      width={80}
-                      height={80}
-                      className="rounded-lg object-cover"
-                    />
+                    <div className="bg-gray-50 rounded-lg p-2 flex-shrink-0">
+                      <Image
+                        src={item.image || "/placeholder.svg"}
+                        alt={item.name}
+                        width={80}
+                        height={80}
+                        className="rounded object-contain"
+                      />
+                    </div>
                     <div className="flex-1">
                       <h3 className="font-semibold">{item.name}</h3>
                       <p className="text-green-600 font-bold">${item.price}</p>
@@ -56,19 +83,19 @@ export default function CartPage() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
+                        onClick={() => handleQuantityUpdate(item.id, Math.max(0, item.quantity - 1), item.name)}
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <span className="w-8 text-center">{item.quantity}</span>
-                      <Button variant="outline" size="icon" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                      <Button variant="outline" size="icon" onClick={() => handleQuantityUpdate(item.id, item.quantity + 1, item.name)}>
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => handleRemoveItem(item.id, item.name)}
                       className="text-red-500 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />

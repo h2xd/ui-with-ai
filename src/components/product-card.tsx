@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { ShoppingCart } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { useRouter } from "next/navigation"
 
 interface Product {
   id: number
@@ -23,6 +25,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart()
+  const router = useRouter()
 
   const handleAddToCart = () => {
     addItem({
@@ -35,19 +38,27 @@ export function ProductCard({ product }: ProductCardProps) {
     toast({
       title: "Added to cart!",
       description: `${product.name} has been added to your cart.`,
+      action: (
+        <ToastAction 
+          altText="View cart"
+          onClick={() => router.push("/cart")}
+        >
+          View Cart
+        </ToastAction>
+      ),
     })
   }
 
   return (
     <Card className="group hover:shadow-lg transition-shadow">
       <CardContent className="p-0">
-        <div className="relative overflow-hidden rounded-t-lg">
+        <div className="relative overflow-hidden rounded-t-lg bg-gray-50">
           <Image
             src={product.image || "/placeholder.svg"}
             alt={product.name}
             width={300}
             height={300}
-            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-64 object-contain group-hover:scale-105 transition-transform duration-300"
           />
           <Badge className="absolute top-2 left-2 bg-green-600">{product.category}</Badge>
         </div>
