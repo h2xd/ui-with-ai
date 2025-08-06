@@ -17,15 +17,33 @@ interface Product {
   image: string
   description: string
   category: string
+  size?: string
+  aspectRatio?: string
 }
 
 interface ProductCardProps {
   product: Product
+  variant?: "default" | "bento"
+  aspectRatio?: string
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, variant = "default", aspectRatio }: ProductCardProps) {
   const { addItem } = useCart()
   const router = useRouter()
+  
+  const getAspectRatioClass = (ratio: string) => {
+    switch (ratio) {
+      case "landscape":
+        return "aspect-[4/3]"
+      case "wide":
+        return "aspect-[16/9]"
+      case "portrait":
+        return "aspect-[3/4]"
+      case "square":
+      default:
+        return "aspect-square"
+    }
+  }
 
   const handleAddToCart = () => {
     addItem({
@@ -47,6 +65,38 @@ export function ProductCard({ product }: ProductCardProps) {
         </ToastAction>
       ),
     })
+  }
+
+  if (variant === "bento") {
+    const aspectClass = aspectRatio ? getAspectRatioClass(aspectRatio) : "aspect-square"
+    
+    return (
+      <Card className="group hover:shadow-lg transition-shadow h-full flex flex-col">
+        <CardContent className="p-0 flex-1">
+          <div className={`relative overflow-hidden rounded-t-lg bg-gray-50 ${aspectClass}`}>
+            <Image
+              src={product.image || "/placeholder.svg"}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-contain group-hover:scale-105 transition-transform duration-300 p-2"
+            />
+            <Badge className="absolute top-2 left-2 bg-green-600/90 backdrop-blur-sm text-xs">{product.category}</Badge>
+          </div>
+          <div className="p-2 lg:p-3 flex-1 flex flex-col">
+            <h3 className="font-semibold text-xs lg:text-sm mb-1 line-clamp-2">{product.name}</h3>
+            <p className="text-muted-foreground text-xs mb-2 line-clamp-2 flex-1">{product.description}</p>
+            <div className="text-sm lg:text-lg font-bold text-green-600">${product.price}</div>
+          </div>
+        </CardContent>
+        <CardFooter className="p-2 lg:p-3 pt-0">
+          <Button onClick={handleAddToCart} size="sm" className="w-full bg-green-600 hover:bg-green-700 text-xs h-8">
+            <ShoppingCart className="w-3 h-3 mr-1" />
+            Add to Cart
+          </Button>
+        </CardFooter>
+      </Card>
+    )
   }
 
   return (
