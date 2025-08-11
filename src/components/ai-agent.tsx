@@ -620,7 +620,7 @@ export function AIAgent() {
       {
         id: "1",
         role: "assistant",
-        content: "Hi! I'm LeekBot 🥬 How can I help you with your leek shopping today? I can help you find the perfect leek, answer questions about our products, or just chat about the wonderful world of leeks!",
+        content: "Hi! I'm Leeki 🥬 How can I help you with your leek shopping today? I can help you find the perfect leek, answer questions about our products, or just chat about the wonderful world of leeks!",
       },
     ],
     onToolCall: (toolCall) => {
@@ -646,7 +646,7 @@ export function AIAgent() {
       <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0 flex flex-col">
         <SheetHeader className="bg-green-600 text-white p-6 rounded-none">
           <SheetTitle className="text-xl flex items-center text-white">
-            🤖 🥬 LeekBot Assistant
+            🤖 🥬 Leeki
           </SheetTitle>
           <p className="text-green-100 text-sm">Your friendly leek shopping companion</p>
         </SheetHeader>
@@ -750,7 +750,7 @@ export function AIAgent() {
                   <div className="bg-gray-100 p-3 rounded-lg">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      LeekBot is thinking...
+                      Leeki is thinking...
                     </div>
                   </div>
                 </div>
