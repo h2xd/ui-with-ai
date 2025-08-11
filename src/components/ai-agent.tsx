@@ -461,7 +461,7 @@ function ToolInvocationRenderer({ toolInvocation, index }: { toolInvocation: any
   const result = toolInvocation.result
 
   return (
-    <div className="my-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+    <div className="my-2 p-3 rounded-2xl bg-white/80 backdrop-blur border border-blue-200/60 shadow-sm">
       <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
         <Settings className="w-3 h-3" />
         <span>🛠️ {toolName}</span>
@@ -549,7 +549,7 @@ function ToolAnnotation({ part, index }: { part: any; index: number }) {
   }
 
   return (
-    <div className="my-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+    <div className="my-2 p-3 rounded-2xl bg-white/80 backdrop-blur border border-blue-200/60 shadow-sm">
       <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
         {getStatusIcon(part.state || 'unknown')}
         <span>🛠️ {getStateMessage(part.state || 'unknown', toolName)}</span>
@@ -643,18 +643,20 @@ export function AIAgent() {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0 flex flex-col">
-        <SheetHeader className="bg-green-600 text-white p-6 rounded-none">
+              <SheetContent side="right" className="w-[420px] sm:w-[560px] p-0 flex flex-col border-l border-border/60 bg-white/80 dark:bg-neutral-900/70 backdrop-blur-xl shadow-2xl rounded-l-2xl">
+        <SheetHeader className="relative p-6 rounded-none overflow-hidden">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-700" />
+          <div aria-hidden className="absolute -top-16 right-0 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <SheetTitle className="text-xl flex items-center text-white">
             🤖 🥬 Leeki
           </SheetTitle>
-          <p className="text-green-100 text-sm">Your friendly leek shopping companion</p>
+          <p className="text-emerald-100/90 text-sm">Your friendly leek shopping companion</p>
         </SheetHeader>
 
         {/* Custom Chat Interface */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Messages */}
-          <ScrollArea className="flex-1 p-4">
+          <ScrollArea className="flex-1 p-4 bg-gradient-to-b from-transparent via-white/40 to-transparent">
             <div className="space-y-4">
               {messages.map((message) => (
                 <div
@@ -664,7 +666,7 @@ export function AIAgent() {
                   }`}
                 >
                   {message.role === 'assistant' && (
-                    <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-emerald-600 shadow ring-2 ring-white/70 flex items-center justify-center flex-shrink-0">
                       <Bot className="w-4 h-4 text-white" />
                     </div>
                   )}
@@ -685,10 +687,10 @@ export function AIAgent() {
                         return (
                           <div
                             key={index}
-                            className={`p-3 rounded-lg ${
+                            className={`p-3 rounded-2xl shadow-sm ${
                               message.role === 'user'
-                                ? 'bg-green-600 text-white'
-                                : 'bg-gray-100 text-gray-900'
+                                ? 'bg-emerald-600 text-white rounded-br-sm'
+                                : 'bg-white/80 backdrop-blur border border-border/60 text-gray-900 rounded-bl-sm'
                             }`}
                           >
                             <div className="whitespace-pre-wrap text-sm">
@@ -721,10 +723,10 @@ export function AIAgent() {
                     {/* Fallback for legacy content property */}
                     {(!message.parts || message.parts.length === 0) && message.content && (
                       <div
-                        className={`p-3 rounded-lg ${
+                        className={`p-3 rounded-2xl shadow-sm ${
                           message.role === 'user'
-                            ? 'bg-green-600 text-white'
-                            : 'bg-gray-100 text-gray-900'
+                            ? 'bg-emerald-600 text-white rounded-br-sm'
+                            : 'bg-white/80 backdrop-blur border border-border/60 text-gray-900 rounded-bl-sm'
                         }`}
                       >
                         <div className="whitespace-pre-wrap text-sm">
@@ -735,26 +737,26 @@ export function AIAgent() {
                   </div>
 
                   {message.role === 'user' && (
-                    <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-zinc-800 shadow ring-2 ring-white/70 flex items-center justify-center flex-shrink-0">
                       <User className="w-4 h-4 text-white" />
                     </div>
                   )}
                 </div>
               ))}
 
-              {isLoading && (
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="bg-gray-100 p-3 rounded-lg">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Leeki is thinking...
-                    </div>
-                  </div>
-                </div>
-              )}
+                             {isLoading && (
+                 <div className="flex items-start gap-3">
+                   <div className="w-8 h-8 rounded-full bg-emerald-600 shadow ring-2 ring-white/70 flex items-center justify-center flex-shrink-0">
+                     <Bot className="w-4 h-4 text-white" />
+                   </div>
+                   <div className="bg-white/80 backdrop-blur border border-border/60 p-3 rounded-2xl shadow-sm">
+                     <div className="flex items-center gap-2 text-sm text-gray-700">
+                       <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                       Leeki is thinking...
+                     </div>
+                   </div>
+                 </div>
+               )}
 
               {error && (
                 <div className="flex items-start gap-3">
@@ -772,22 +774,22 @@ export function AIAgent() {
           </ScrollArea>
 
           {/* Input */}
-          <div className="p-4 border-t bg-white">
+                     <div className="p-4 border-t border-border/60 bg-white/80 dark:bg-neutral-900/70 backdrop-blur">
             <form onSubmit={handleSubmit} className="flex gap-2">
-              <Input
-                value={input}
-                onChange={handleInputChange}
-                placeholder="Type a message..."
-                disabled={isLoading}
-                className="flex-1"
-                autoFocus
-              />
-              <Button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                size="icon"
-                className="bg-green-600 hover:bg-green-700"
-              >
+                             <Input
+                 value={input}
+                 onChange={handleInputChange}
+                 placeholder="Type a message..."
+                 disabled={isLoading}
+                 className="flex-1 rounded-xl border-border/60 bg-white/70 dark:bg-neutral-800/60 backdrop-blur placeholder:text-muted-foreground/70"
+                 autoFocus
+               />
+                             <Button
+                 type="submit"
+                 disabled={isLoading || !input.trim()}
+                 size="icon"
+                 className="bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-600/20"
+               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (

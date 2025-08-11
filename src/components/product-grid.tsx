@@ -38,10 +38,10 @@ export function ProductGrid() {
               Discover our amazing collection of leeks and leek-related products. From meme classics to fresh produce!
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {/* Loading skeleton */}
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-card rounded-lg border p-4 animate-pulse">
+                             <div key={i} className="bg-card rounded-xl border p-4 animate-pulse">
                 <div className="bg-muted h-48 rounded-md mb-4"></div>
                 <div className="bg-muted h-4 rounded mb-2"></div>
                 <div className="bg-muted h-3 rounded mb-2 w-3/4"></div>

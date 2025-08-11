@@ -30,7 +30,7 @@ interface ProductCardProps {
 export function ProductCard({ product, variant = "default", aspectRatio }: ProductCardProps) {
   const { addItem } = useCart()
   const router = useRouter()
-  
+
   const getAspectRatioClass = (ratio: string) => {
     switch (ratio) {
       case "landscape":
@@ -57,7 +57,7 @@ export function ProductCard({ product, variant = "default", aspectRatio }: Produ
       title: "Added to cart!",
       description: `${product.name} has been added to your cart.`,
       action: (
-        <ToastAction 
+        <ToastAction
           altText="View cart"
           onClick={() => router.push("/cart")}
         >
@@ -69,11 +69,11 @@ export function ProductCard({ product, variant = "default", aspectRatio }: Produ
 
   if (variant === "bento") {
     const aspectClass = aspectRatio ? getAspectRatioClass(aspectRatio) : "aspect-square"
-    
+
     return (
-      <Card className="group hover:shadow-lg transition-shadow h-full flex flex-col">
+      <Card className="group rounded-xl border border-border/60 bg-card hover:shadow-xl transition-all h-full flex flex-col hover:-translate-y-0.5 hover:ring-1 hover:ring-emerald-200/70">
         <CardContent className="p-0 flex-1">
-          <div className={`relative overflow-hidden rounded-t-lg bg-gray-50 ${aspectClass}`}>
+          <div className={`relative overflow-hidden rounded-t-xl bg-muted/40 ${aspectClass}`}>
             <Image
               src={product.image || "/placeholder.svg"}
               alt={product.name}
@@ -81,7 +81,7 @@ export function ProductCard({ product, variant = "default", aspectRatio }: Produ
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-contain group-hover:scale-105 transition-transform duration-300 p-2"
             />
-            <Badge className="absolute top-2 left-2 bg-green-600/90 backdrop-blur-sm text-xs">{product.category}</Badge>
+                         <Badge className="absolute top-2 left-2 bg-emerald-600/90 backdrop-blur-sm text-xs">{product.category}</Badge>
           </div>
           <div className="p-2 lg:p-3 flex-1 flex flex-col">
             <h3 className="font-semibold text-xs lg:text-sm mb-1 line-clamp-2">{product.name}</h3>
@@ -100,9 +100,9 @@ export function ProductCard({ product, variant = "default", aspectRatio }: Produ
   }
 
   return (
-    <Card className="group hover:shadow-lg transition-shadow">
+    <Card className="group rounded-xl border border-border/60 bg-card hover:shadow-xl transition-all hover:-translate-y-0.5 hover:ring-1 hover:ring-emerald-200/70">
       <CardContent className="p-0">
-        <div className="relative overflow-hidden rounded-t-lg bg-gray-50">
+        <div className="relative overflow-hidden rounded-t-xl bg-muted/40">
           <Image
             src={product.image || "/placeholder.svg"}
             alt={product.name}
@@ -110,7 +110,7 @@ export function ProductCard({ product, variant = "default", aspectRatio }: Produ
             height={300}
             className="w-full h-64 object-contain group-hover:scale-105 transition-transform duration-300"
           />
-          <Badge className="absolute top-2 left-2 bg-green-600">{product.category}</Badge>
+          <Badge className="absolute top-2 left-2 bg-emerald-600/90">{product.category}</Badge>
         </div>
         <div className="p-4">
           <h3 className="font-semibold text-lg mb-2">{product.name}</h3>

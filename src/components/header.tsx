@@ -19,7 +19,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-white/70 dark:bg-neutral-900/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <div className="text-2xl">🥬</div>
@@ -28,16 +28,16 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="/" className="text-sm font-medium hover:text-green-600 transition-colors">
+          <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Home
           </Link>
-          <Link href="/shop" className="text-sm font-medium hover:text-green-600 transition-colors">
+          <Link href="/shop" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Shop
           </Link>
-          <Link href="/about" className="text-sm font-medium hover:text-green-600 transition-colors">
+          <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             About
           </Link>
-          <Link href="/contact" className="text-sm font-medium hover:text-green-600 transition-colors">
+          <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Contact
           </Link>
         </nav>
