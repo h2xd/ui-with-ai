@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -22,7 +22,11 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
         <div className="grid gap-2 max-h-96 overflow-y-auto">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.slice(0, 8).map((product: any, index: number) => (
-            <div key={index} className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div 
+              key={index} 
+              className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 animate-in slide-in-from-left-4 fade-in-0"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="font-semibold text-gray-900 text-sm mb-1">{product.name}</div>
@@ -120,7 +124,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
 
   if (toolName === 'search_products' && output.products && Array.isArray(output.products)) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
         <div className="flex items-center gap-2 text-green-800 font-medium">
           <span className="text-lg">🔎</span>
           <span>{output.message}</span>
@@ -133,7 +137,11 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
         <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
-            <div key={index} className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div 
+              key={index} 
+              className="bg-green-50 border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 animate-in slide-in-from-left-4 fade-in-0"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="font-semibold text-gray-900 text-sm mb-1">{product.name}</div>
@@ -194,12 +202,12 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
 
   if (toolName === 'check_availability' && output.productName) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
         <div className="flex items-center gap-2 text-green-800 font-medium">
           <span className="text-lg">📦</span>
           <span>Availability Check</span>
         </div>
-        <div className="bg-white border border-green-200 rounded-lg p-4 shadow-sm">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm animate-in slide-in-from-left-4 fade-in-0 duration-300">
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-900 text-base">{output.productName}</div>
@@ -229,7 +237,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
   // Handle get_products_in_price_range
   if (toolName === 'get_products_in_price_range' && output.products && Array.isArray(output.products)) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
         <div className="flex items-center gap-2 text-green-800 font-medium">
           <span className="text-lg">💰</span>
           <span>{output.message}</span>
@@ -242,7 +250,11 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
         <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
-            <div key={index} className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div 
+              key={index} 
+              className="bg-green-50 border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 animate-in slide-in-from-left-4 fade-in-0"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="font-semibold text-gray-900 text-sm mb-1">{product.name}</div>
@@ -280,12 +292,12 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
   // Handle filter_by_category
   if (toolName === 'filter_by_category' && output.products && Array.isArray(output.products)) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
         <div className="flex items-center gap-2 text-green-800 font-medium">
           <span className="text-lg">🏷️</span>
           <span>{output.message}</span>
           {output.category && (
-            <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">
+            <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
               📁 {output.category}
             </span>
           )}
@@ -293,7 +305,11 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
         <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
-            <div key={index} className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div 
+              key={index} 
+              className="bg-green-50 border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 animate-in slide-in-from-left-4 fade-in-0"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="font-semibold text-gray-900 text-sm mb-1">{product.name}</div>
@@ -331,7 +347,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
   // Handle get_featured_products
   if (toolName === 'get_featured_products' && output.products && Array.isArray(output.products)) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
         <div className="flex items-center gap-2 text-green-800 font-medium">
           <span className="text-lg">⭐</span>
           <span>{output.message}</span>
@@ -342,7 +358,11 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
         <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
-            <div key={index} className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div 
+              key={index} 
+              className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 animate-in slide-in-from-left-4 fade-in-0"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -380,12 +400,12 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
   // Handle get_recommendations (if this tool exists)
   if (toolName === 'get_recommendations' && output.recommendations && Array.isArray(output.recommendations)) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
         <div className="flex items-center gap-2 text-green-800 font-medium">
           <span className="text-lg">🎯</span>
           <span>{output.message}</span>
           {output.based_on && (
-            <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
               Based on: {JSON.stringify(output.based_on)}
             </span>
           )}
@@ -393,7 +413,11 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
         <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.recommendations.map((product: any, index: number) => (
-            <div key={index} className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div 
+              key={index} 
+              className="bg-gradient-to-r from-blue-50 to-green-50 border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 animate-in slide-in-from-left-4 fade-in-0"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -606,6 +630,8 @@ function ToolAnnotation({ part, index }: { part: any; index: number }) {
 
 export function AIAgent() {
   const [isOpen, setIsOpen] = useState(false)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const {
     messages,
@@ -630,6 +656,13 @@ export function AIAgent() {
       console.error('Chat error:', error)
     }
   })
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages, isLoading])
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -687,7 +720,7 @@ export function AIAgent() {
                         return (
                           <div
                             key={index}
-                            className={`p-3 rounded-2xl shadow-sm ${
+                            className={`p-3 rounded-2xl shadow-sm animate-in slide-in-from-bottom-4 fade-in-0 duration-300 ${
                               message.role === 'user'
                                 ? 'bg-emerald-600 text-white rounded-br-sm'
                                 : 'bg-white/80 backdrop-blur border border-border/60 text-gray-900 rounded-bl-sm'
@@ -723,7 +756,7 @@ export function AIAgent() {
                     {/* Fallback for legacy content property */}
                     {(!message.parts || message.parts.length === 0) && message.content && (
                       <div
-                        className={`p-3 rounded-2xl shadow-sm ${
+                        className={`p-3 rounded-2xl shadow-sm animate-in slide-in-from-bottom-4 fade-in-0 duration-300 ${
                           message.role === 'user'
                             ? 'bg-emerald-600 text-white rounded-br-sm'
                             : 'bg-white/80 backdrop-blur border border-border/60 text-gray-900 rounded-bl-sm'
@@ -745,7 +778,7 @@ export function AIAgent() {
               ))}
 
                              {isLoading && (
-                 <div className="flex items-start gap-3">
+                 <div className="flex items-start gap-3 animate-in slide-in-from-bottom-4 fade-in-0 duration-300">
                    <div className="w-8 h-8 rounded-full bg-emerald-600 shadow ring-2 ring-white/70 flex items-center justify-center flex-shrink-0">
                      <Bot className="w-4 h-4 text-white" />
                    </div>
@@ -757,6 +790,9 @@ export function AIAgent() {
                    </div>
                  </div>
                )}
+
+              {/* Scroll anchor */}
+              <div ref={messagesEndRef} />
 
               {error && (
                 <div className="flex items-start gap-3">
