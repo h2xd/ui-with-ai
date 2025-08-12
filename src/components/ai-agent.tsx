@@ -643,10 +643,10 @@ export function AIAgent() {
         </Button>
       </SheetTrigger>
 
-              <SheetContent side="right" className="w-[420px] sm:w-[560px] p-0 flex flex-col border-l border-border/60 bg-white/80 dark:bg-neutral-900/70 backdrop-blur-xl shadow-2xl rounded-l-2xl">
-        <SheetHeader className="relative p-6 rounded-none overflow-hidden">
+              <SheetContent side="right" className="md:w-[600px] sm:max-w-full p-0 border-none flex flex-col rounded-l-2xl overflow-hidden border-l border-border/60 backdrop-blur-xl shadow-2xl">
+        <SheetHeader className="relative p-6">
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-700" />
-          <div aria-hidden className="absolute -top-16 right-0 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+          <div aria-hidden className="absolute -top-16 right-0 h-40 w-40 rounded-full blur-2xl" />
           <SheetTitle className="text-xl flex items-center text-white">
             🤖 🥬 Leeki
           </SheetTitle>
