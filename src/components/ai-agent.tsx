@@ -1,375 +1,73 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, Bot, User, Send, Loader2, Settings, CheckCircle, XCircle, Clock, ShoppingCart, Minus, Plus } from 'lucide-react'
+import { MessageCircle, Bot, User, Send, Loader2 } from 'lucide-react'
 import { useChat } from "ai/react"
-import { useCart } from "@/hooks/use-cart"
-import { toast } from "@/hooks/use-toast"
-import { ToastAction } from "@/components/ui/toast"
-import { useRouter } from "next/navigation"
+import { ProductDetailsCard } from "@/components/tools/ProductDetailsCard"
+import { ListProductsResult } from "@/components/tools/ListProductsResult"
+import { SearchProductsResult } from "@/components/tools/SearchProductsResult"
+import { CategoriesResult } from "@/components/tools/CategoriesResult"
+import { AvailabilityResult } from "@/components/tools/AvailabilityResult"
+import { PriceRangeResult } from "@/components/tools/PriceRangeResult"
+import { CategoryFilterResult } from "@/components/tools/CategoryFilterResult"
+import { FeaturedProductsResult } from "@/components/tools/FeaturedProductsResult"
+import { RecommendationsResult } from "@/components/tools/RecommendationsResult"
 
 // Product result renderer component
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ProductResultRenderer({ output, toolName }: { output: any; toolName: string }) {
-  const { addItem, items, updateQuantity } = useCart()
-  const router = useRouter()
   const [hasAnimated, setHasAnimated] = useState(false)
   useEffect(() => {
     if (!hasAnimated) setHasAnimated(true)
   }, [hasAnimated])
   const shouldAnimate = !hasAnimated
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onAddToCart = (p: any) => {
-    addItem({ id: p.id, name: p.name, price: p.price, image: p.image, quantity: 1 })
-    toast({
-      title: "Added to cart!",
-      description: `${p.name} has been added to your cart.`,
-      action: (
-        <ToastAction altText="View cart" onClick={() => router.push("/cart")}>View Cart</ToastAction>
-      ),
-    })
-  }
-
-  const getQuantity = (id: number) => items.find(i => i.id === id)?.quantity ?? 0
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const increment = (p: any) => updateQuantity(p.id, getQuantity(p.id) + 1)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const decrement = (p: any) => updateQuantity(p.id, Math.max(0, getQuantity(p.id) - 1))
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const CompactProductItem = ({ product, index, shouldAnimate }: { product: any; index: number; shouldAnimate: boolean }) => {
-    const qty = getQuantity(product.id)
-    return (
-    <div
-      key={index}
-      className={`flex items-center gap-3 bg-white border border-green-200 rounded-lg p-2 hover:shadow-sm transition-all duration-300 ${shouldAnimate ? 'animate-in slide-in-from-left-4 fade-in-0' : ''}`}
-      style={shouldAnimate ? { animationDelay: `${index * 100}ms` } : undefined}
-    >
-      <div className="relative w-14 h-14 rounded-md overflow-hidden bg-muted/30 flex-shrink-0">
-        <Image src={product.image || "/placeholder.svg"} alt={product.name} fill sizes="56px" className="object-contain p-1" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <div className="font-semibold text-sm text-gray-900 truncate">{product.name}</div>
-            <div className="mt-1 flex items-center gap-1 flex-wrap">
-              <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-[10px] font-medium">
-                {product.category}
-              </span>
-              {product.featured && (
-                <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-[10px] font-medium">⭐ Featured</span>
-              )}
-              <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                  product.inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                }`}
-              >
-                {product.inStock ? '✅ In Stock' : '❌ Out of Stock'}
-              </span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-      <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-1">
-        <div className="text-sm font-bold text-green-600">${product.price}</div>
-        {qty > 0 ? (
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => decrement(product)}>
-              <Minus className="h-3 w-3" />
-            </Button>
-            <span className="w-6 text-center text-sm">{qty}</span>
-            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => increment(product)} disabled={!product.inStock}>
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div>
-        ) : (
-          <Button
-            size="sm"
-            className="h-7 px-2 bg-green-600 hover:bg-green-700"
-            disabled={!product.inStock}
-            onClick={() => onAddToCart(product)}
-          >
-            <ShoppingCart className="w-3 h-3 mr-1" />
-            Add
-          </Button>
-        )}
-      </div>
-    </div>
-    )
-  }
-
-  // Handle different tool outputs
   if (toolName === 'list_products' && output.products && Array.isArray(output.products)) {
-    return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">🛒</span>
-          <span>{output.message}</span>
-        </div>
-        <div className="grid gap-2 max-h-96 overflow-y-auto">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {output.products.slice(0, 8).map((product: any, index: number) => (
-            <CompactProductItem key={product.id ?? index} product={product} index={index} shouldAnimate={shouldAnimate} />
-          ))}
-          {output.products.length > 8 && (
-            <div className="text-center py-2 px-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-600 text-sm">... and {output.products.length - 8} more products</span>
-              <div className="text-xs text-gray-500 mt-1">Total: {output.products.length} products found</div>
-            </div>
-          )}
-        </div>
-      </div>
-    )
+    return <ListProductsResult output={output} shouldAnimate={shouldAnimate} />
   }
 
   if (toolName === 'get_product_details' && output.product) {
-    const product = output.product
     return (
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-green-800 font-medium">
           <span className="text-lg">🔍</span>
           <span>{output.message}</span>
         </div>
-        <div className="bg-white border border-green-200 rounded-lg p-3 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="relative w-20 h-20 rounded-md overflow-hidden bg-muted/30 flex-shrink-0">
-              <Image src={product.image || "/placeholder.svg"} alt={product.name} fill sizes="80px" className="object-contain p-1" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-start justify-between mb-1">
-                <div className="flex-1">
-                  <div className="font-bold text-gray-900 text-sm mb-1">{product.name}</div>
-                  <div className="text-xs text-gray-600 mb-2 leading-relaxed">{product.description}</div>
-                </div>
-                <div className="text-right ml-4">
-                  <div className="text-lg font-bold text-green-600">${product.price}</div>
-                  <div className="text-[10px] text-gray-500">ID: {product.id}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                  📁 {product.category}
-                </span>
-                {product.featured && (
-                  <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
-                    ⭐ Featured Product
-                  </span>
-                )}
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                  product.inStock
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {product.inStock ? '✅ Available' : '❌ Out of Stock'}
-                </span>
-              </div>
-
-              <div className="mt-3">
-                <Button
-                  size="sm"
-                  className="h-8 px-3 bg-green-600 hover:bg-green-700"
-                  disabled={!product.inStock}
-                  onClick={() => onAddToCart(product)}
-                >
-                  <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
-                </Button>
-              </div>
-
-              {product.tags && product.tags.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-100">
-                  <div className="text-xs text-gray-500 mb-1">Tags:</div>
-                  <div className="flex gap-1 flex-wrap">
-                    {product.tags.map((tag: string, tagIndex: number) => (
-                      <span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-[10px]">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <ProductDetailsCard product={output.product} />
       </div>
     )
   }
 
   if (toolName === 'search_products' && output.products && Array.isArray(output.products)) {
-    return (
-      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">🔎</span>
-          <span>{output.message}</span>
-          {output.query && (
-            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
-              &ldquo;{output.query}&rdquo;
-            </span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {output.products.map((product: any, index: number) => (
-            <CompactProductItem key={product.id ?? index} product={product} index={index} shouldAnimate={shouldAnimate} />
-          ))}
-        </div>
-      </div>
-    )
+    return <SearchProductsResult output={output} shouldAnimate={shouldAnimate} />
   }
 
   if (toolName === 'get_product_categories' && output.categories) {
-    return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">📁</span>
-          <span>{output.message}</span>
-          <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-            {output.categories.length} categories
-          </span>
-        </div>
-        <div className="bg-white border border-green-200 rounded-lg p-3 shadow-sm">
-          <div className="grid grid-cols-2 gap-2">
-            {output.categories.map((category: string, index: number) => (
-              <div key={index} className="flex items-center gap-2 p-2 bg-green-50 rounded-lg border border-green-100 hover:bg-green-100 transition-colors">
-                <span className="text-green-600">📂</span>
-                <span className="text-sm font-medium text-gray-900">{category}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    return <CategoriesResult output={output} />
   }
 
   if (toolName === 'check_availability' && output.productName) {
-    return (
-      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">📦</span>
-          <span>Availability Check</span>
-        </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm animate-in slide-in-from-left-4 fade-in-0 duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-semibold text-gray-900 text-base">{output.productName}</div>
-              <div className="text-sm text-gray-600">Product ID: {output.productId}</div>
-            </div>
-            <div className="text-right">
-              <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
-                output.inStock
-                  ? 'bg-green-100 text-green-700 border border-green-200'
-                  : 'bg-red-100 text-red-700 border border-red-200'
-              }`}>
-                <span className="text-lg">
-                  {output.inStock ? '✅' : '❌'}
-                </span>
-                <span>{output.availability}</span>
-              </div>
-            </div>
-          </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="text-sm text-gray-600">{output.message}</div>
-          </div>
-        </div>
-      </div>
-    )
+    return <AvailabilityResult output={output} />
   }
 
-  // Handle get_products_in_price_range
   if (toolName === 'get_products_in_price_range' && output.products && Array.isArray(output.products)) {
-    return (
-      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">💰</span>
-          <span>{output.message}</span>
-          {output.priceRange && (
-            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
-              ${output.priceRange.minPrice} - ${output.priceRange.maxPrice}
-            </span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {output.products.map((product: any, index: number) => (
-            <CompactProductItem key={product.id ?? index} product={product} index={index} shouldAnimate={shouldAnimate} />
-          ))}
-        </div>
-      </div>
-    )
+    return <PriceRangeResult output={output} shouldAnimate={shouldAnimate} />
   }
 
-  // Handle filter_by_category
   if (toolName === 'filter_by_category' && output.products && Array.isArray(output.products)) {
-    return (
-      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">🏷️</span>
-          <span>{output.message}</span>
-          {output.category && (
-            <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-              📁 {output.category}
-            </span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {output.products.map((product: any, index: number) => (
-            <CompactProductItem key={product.id ?? index} product={product} index={index} shouldAnimate={shouldAnimate} />
-          ))}
-        </div>
-      </div>
-    )
+    return <CategoryFilterResult output={output} shouldAnimate={shouldAnimate} />
   }
 
-  // Handle get_featured_products
   if (toolName === 'get_featured_products' && output.products && Array.isArray(output.products)) {
-    return (
-      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">⭐</span>
-          <span>{output.message}</span>
-          <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">
-            {output.products.length} featured items
-          </span>
-        </div>
-        <div className="grid gap-2">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {output.products.map((product: any, index: number) => (
-            <CompactProductItem key={product.id ?? index} product={product} index={index} shouldAnimate={shouldAnimate} />
-          ))}
-        </div>
-      </div>
-    )
+    return <FeaturedProductsResult output={output} shouldAnimate={shouldAnimate} />
   }
 
-  // Handle get_recommendations (if this tool exists)
   if (toolName === 'get_recommendations' && output.recommendations && Array.isArray(output.recommendations)) {
-    return (
-      <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-white animate-in slide-in-from-left-4 fade-in-0 duration-300">
-        <div className="flex items-center gap-2 text-green-800 font-medium">
-          <span className="text-lg">🎯</span>
-          <span>{output.message}</span>
-          {output.based_on && (
-            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
-              Based on: {JSON.stringify(output.based_on)}
-            </span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {output.recommendations.map((product: any, index: number) => (
-            <CompactProductItem key={product.id ?? index} product={product} index={index} shouldAnimate={shouldAnimate} />
-          ))}
-        </div>
-      </div>
-    )
+    return <RecommendationsResult output={output} shouldAnimate={shouldAnimate} />
   }
 
   // Fallback for other tool types or unrecognized output
@@ -392,11 +90,9 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
 
 // Tool invocation renderer for AI SDK v4
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ToolInvocationRenderer({ toolInvocation, index }: { toolInvocation: any; index: number }) {
+function ToolInvocationRenderer({ toolInvocation }: { toolInvocation: any; index: number }) {
 
   const toolName = toolInvocation.toolName || 'unknown'
-  const state = toolInvocation.state || 'unknown'
-  const args = toolInvocation.args || {}
   const result = toolInvocation.result
 
   const getToolDisplayName = (toolName: string) => {
