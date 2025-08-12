@@ -26,28 +26,63 @@ export function ChatSection({ handler }: ChatSectionProps) {
             if (toolUseEvents.length === 0) return null
             
             return (
-              <div className="border rounded-lg p-3 mt-2 bg-muted/50">
+              <div className="border rounded-lg p-3 mt-2 bg-muted/50 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
                 <div className="text-sm font-medium mb-2">🛠️ Tool Usage</div>
-                {toolUseEvents.map((event, index: number) => (
-                  <div key={index} className="text-xs space-y-1">
-                    <div><strong>Tool:</strong> {event.name}</div>
-                    {event.args && (
-                      <div><strong>Args:</strong> {JSON.stringify(event.args, null, 2)}</div>
-                    )}
-                    {event.result && (
-                      <div><strong>Result:</strong> {JSON.stringify(event.result).substring(0, 100)}...</div>
-                    )}
-                    {event.error && (
-                      <div className="text-destructive"><strong>Error:</strong> {event.error}</div>
-                    )}
-                    {event.duration && (
-                      <div><strong>Duration:</strong> {event.duration}ms</div>
-                    )}
-                    <div className="text-muted-foreground">
-                      {new Date(event.timestamp).toLocaleTimeString()}
+                {toolUseEvents.map((event, index: number) => {
+                  // More robust completion detection
+                  const hasResult = event.result !== undefined && event.result !== null
+                  const hasError = event.error !== undefined && event.error !== null
+                  const isCompleted = hasResult || hasError
+                  
+                  return (
+                    <div 
+                      key={`${event.name}-${index}-${event.timestamp}`}
+                      className={`text-xs space-y-1 transition-all duration-500 ease-in-out ${
+                        isCompleted 
+                          ? 'opacity-60 scale-95' 
+                          : 'opacity-100 scale-100 animate-pulse'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">🛠️ {event.name}</span>
+                        {isCompleted ? (
+                          <span className="text-green-600 text-xs">✓ completed</span>
+                        ) : (
+                          <div className="inline-flex items-center gap-1">
+                            <div className="animate-spin rounded-full h-3 w-3 border border-primary border-t-transparent"></div>
+                            <span className="text-yellow-600 text-xs">running...</span>
+                          </div>
+                        )}
+                      </div>
+                      {event.args && (
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded p-2">
+                          <strong>Parameters:</strong> 
+                          <pre className="text-xs mt-1 overflow-x-auto">{JSON.stringify(event.args, null, 2)}</pre>
+                        </div>
+                      )}
+                      {hasResult && (
+                        <div className="animate-in fade-in-0 slide-in-from-left-2 duration-300 bg-green-50 dark:bg-green-900/20 rounded p-2 border-l-2 border-green-500">
+                          <strong className="text-green-700 dark:text-green-300">✓ Result:</strong>
+                          <pre className="text-xs mt-1 overflow-x-auto max-h-32 overflow-y-auto">{typeof event.result === 'string' ? event.result : JSON.stringify(event.result, null, 2)}</pre>
+                        </div>
+                      )}
+                      {hasError && (
+                        <div className="animate-in fade-in-0 slide-in-from-left-2 duration-300 bg-red-50 dark:bg-red-900/20 rounded p-2 border-l-2 border-red-500">
+                          <strong className="text-red-700 dark:text-red-300">✗ Error:</strong>
+                          <pre className="text-xs mt-1">{event.error}</pre>
+                        </div>
+                      )}
+                      {event.duration && (
+                        <div className="text-muted-foreground text-xs">
+                          <strong>Duration:</strong> {event.duration}ms
+                        </div>
+                      )}
+                      <div className="text-muted-foreground text-xs">
+                        {new Date(event.timestamp).toLocaleTimeString()}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )
           }

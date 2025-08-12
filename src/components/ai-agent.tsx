@@ -130,7 +130,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
             </span>
           )}
         </div>
-        <div className="grid gap-2 max-h-80 overflow-y-auto">
+        <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
             <div key={index} className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
@@ -239,7 +239,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
             </span>
           )}
         </div>
-        <div className="grid gap-2 max-h-96 overflow-y-auto">
+        <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
             <div key={index} className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
@@ -290,7 +290,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
             </span>
           )}
         </div>
-        <div className="grid gap-2 max-h-96 overflow-y-auto">
+        <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
             <div key={index} className="bg-white border border-green-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
@@ -339,7 +339,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
             {output.products.length} featured items
           </span>
         </div>
-        <div className="grid gap-2 max-h-96 overflow-y-auto">
+        <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.products.map((product: any, index: number) => (
             <div key={index} className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
@@ -390,7 +390,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
             </span>
           )}
         </div>
-        <div className="grid gap-2 max-h-96 overflow-y-auto">
+        <div className="grid gap-2">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {output.recommendations.map((product: any, index: number) => (
             <div key={index} className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
@@ -460,15 +460,29 @@ function ToolInvocationRenderer({ toolInvocation, index }: { toolInvocation: any
   const args = toolInvocation.args || {}
   const result = toolInvocation.result
 
+  const getToolDisplayName = (toolName: string) => {
+    const displayNames: Record<string, string> = {
+      'list_products': 'Products',
+      'get_product_details': 'Product Details',
+      'search_products': 'Product Search',
+      'get_product_categories': 'Categories',
+      'filter_products': 'Filtered Products',
+      'get_products_in_price_range': 'Products in Price Range',
+      'get_featured_products': 'Featured Products',
+      'get_recommendations': 'Recommendations'
+    }
+    return displayNames[toolName] || toolName
+  }
+
   return (
-    <div className="my-2 p-3 rounded-2xl bg-white/80 backdrop-blur border border-blue-200/60 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
+    <>
+      {/* <div>
+<div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
         <Settings className="w-3 h-3" />
-        <span>🛠️ {toolName}</span>
+        <span>{getToolDisplayName(toolName)}</span>
         <span className="text-xs text-gray-500">({state})</span>
       </div>
 
-      {/* Show arguments */}
       {Object.keys(args).length > 0 && (
         <div className="mb-2">
           <div className="text-xs text-gray-600 mb-1">Parameters:</div>
@@ -477,17 +491,14 @@ function ToolInvocationRenderer({ toolInvocation, index }: { toolInvocation: any
           </div>
         </div>
       )}
+      </div> */}
+
 
       {/* Show result if available */}
       {result && (
-        <div>
-          <div className="text-xs text-green-700 mb-1">Result:</div>
-          <div className="text-xs bg-green-50 p-2 rounded border border-green-200">
-            <ProductResultRenderer output={result} toolName={toolName} />
-          </div>
-        </div>
+        <ProductResultRenderer output={result} toolName={toolName} />
       )}
-    </div>
+    </>
   )
 }
 
@@ -507,20 +518,6 @@ function ToolAnnotation({ part, index }: { part: any; index: number }) {
       'filter_products': 'Filter Products'
     }
     return displayNames[toolName] || toolName
-  }
-
-  const getStatusIcon = (state: string) => {
-    switch (state) {
-      case 'input-streaming':
-      case 'input-available':
-        return <Clock className="w-3 h-3 text-blue-500 animate-pulse" />
-      case 'output-available':
-        return <CheckCircle className="w-3 h-3 text-green-500" />
-      case 'output-error':
-        return <XCircle className="w-3 h-3 text-red-500" />
-      default:
-        return <Settings className="w-3 h-3 text-gray-500" />
-    }
   }
 
   const getStateMessage = (state: string, toolName: string) => {
@@ -548,10 +545,13 @@ function ToolAnnotation({ part, index }: { part: any; index: number }) {
     toolName = 'unknown'
   }
 
+  if (!part.state) {
+    return null
+  }
+
   return (
     <div className="my-2 p-3 rounded-2xl bg-white/80 backdrop-blur border border-blue-200/60 shadow-sm">
       <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-2">
-        {getStatusIcon(part.state || 'unknown')}
         <span>🛠️ {getStateMessage(part.state || 'unknown', toolName)}</span>
       </div>
 
