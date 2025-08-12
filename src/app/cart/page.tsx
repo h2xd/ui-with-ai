@@ -12,7 +12,10 @@ import Link from "next/link"
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, getTotal } = useCart()
-  const total = getTotal()
+  const subtotal = getTotal()
+  const taxRate = 0.08
+  const tax = subtotal * taxRate
+  const total = subtotal + tax
 
   const handleQuantityUpdate = (id: number, newQuantity: number, itemName: string) => {
     updateQuantity(id, newQuantity)
@@ -115,20 +118,20 @@ export default function CartPage() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
                   <span>Free</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Tax</span>
-                  <span>${(total * 0.08).toFixed(2)}</span>
+                  <span>Tax ({(taxRate * 100).toFixed(0)}%)</span>
+                  <span>${tax.toFixed(2)}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>${(total * 1.08).toFixed(2)}</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
                 <Link href="/checkout" className="w-full">
                   <Button className="w-full bg-green-600 hover:bg-green-700">Proceed to Checkout</Button>

@@ -13,8 +13,14 @@ import { useState } from "react"
 import { toast } from "@/hooks/use-toast"
 
 export default function CheckoutPage() {
-  const { items, total, clearCart } = useCart()
+  const { items, getTotal, clearCart } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
+  
+  // Calculate totals
+  const subtotal = getTotal()
+  const taxRate = 0.08
+  const tax = subtotal * taxRate
+  const total = subtotal + tax
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -120,20 +126,20 @@ export default function CheckoutPage() {
                 <Separator />
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
                   <span>Free</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Tax</span>
-                  <span>${(total * 0.08).toFixed(2)}</span>
+                  <span>Tax ({(taxRate * 100).toFixed(0)}%)</span>
+                  <span>${tax.toFixed(2)}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>${(total * 1.08).toFixed(2)}</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
                 <Button
                   onClick={handleSubmit}

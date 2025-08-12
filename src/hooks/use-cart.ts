@@ -18,6 +18,7 @@ interface CartStore {
   updateQuantity: (id: number, quantity: number) => void
   clearCart: () => void
   getTotal: () => number
+  total: number
 }
 
 function writeCartCookie(items: CartItem[]) {
@@ -36,6 +37,10 @@ export const useCart = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      get total() {
+        const state = get()
+        return state.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      },
       addItem: (item) =>
         set((state) => {
           const existingItem = state.items.find((i) => i.id === item.id)
@@ -65,7 +70,7 @@ export const useCart = create<CartStore>()(
           writeCartCookie(newItems)
           return { items: newItems }
         }),
-      clearCart: () => set((state) => {
+      clearCart: () => set(() => {
         const newItems: CartItem[] = []
         writeCartCookie(newItems)
         return { items: newItems }
