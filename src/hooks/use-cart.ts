@@ -20,6 +20,18 @@ interface CartStore {
   getTotal: () => number
 }
 
+function writeCartCookie(items: CartItem[]) {
+  try {
+    if (typeof document === 'undefined') return
+    const value = encodeURIComponent(JSON.stringify(items))
+    // 30 days
+    const maxAge = 60 * 60 * 24 * 30
+    document.cookie = `cart_items=${value}; Path=/; Max-Age=${maxAge}; SameSite=Lax`
+  } catch {
+    // ignore cookie errors
+  }
+}
+
 export const useCart = create<CartStore>()(
   persist(
     (set, get) => ({
@@ -28,26 +40,36 @@ export const useCart = create<CartStore>()(
         set((state) => {
           const existingItem = state.items.find((i) => i.id === item.id)
           if (existingItem) {
-            return {
-              items: state.items.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i)),
-            }
+            const newItems = state.items.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i))
+            writeCartCookie(newItems)
+            return { items: newItems }
           }
-          return { items: [...state.items, item] }
+          const newItems = [...state.items, item]
+          writeCartCookie(newItems)
+          return { items: newItems }
         }),
       removeItem: (id) =>
-        set((state) => ({
-          items: state.items.filter((item) => item.id !== id),
-        })),
+        set((state) => {
+          const newItems = state.items.filter((item) => item.id !== id)
+          writeCartCookie(newItems)
+          return { items: newItems }
+        }),
       updateQuantity: (id, quantity) =>
         set((state) => {
           if (quantity <= 0) {
-            return { items: state.items.filter((item) => item.id !== id) }
+            const newItems = state.items.filter((item) => item.id !== id)
+            writeCartCookie(newItems)
+            return { items: newItems }
           }
-          return {
-            items: state.items.map((item) => (item.id === id ? { ...item, quantity } : item)),
-          }
+          const newItems = state.items.map((item) => (item.id === id ? { ...item, quantity } : item))
+          writeCartCookie(newItems)
+          return { items: newItems }
         }),
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set((state) => {
+        const newItems: CartItem[] = []
+        writeCartCookie(newItems)
+        return { items: newItems }
+      }),
       getTotal: () => {
         const state = get()
         return state.items.reduce((sum, item) => sum + item.price * item.quantity, 0)

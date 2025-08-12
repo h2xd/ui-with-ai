@@ -92,6 +92,36 @@ const aiSdkTools = {
     execute: async ({ productId }) => {
       return await productTools.checkAvailability(productId)
     }
+  }),
+
+  list_cart_items: tool({
+    description: "List all items currently in the user's cart (client-synced)",
+    parameters: z.object({}),
+    // We read the cookie via closure on the incoming request by throwing and catching below in POST.
+    // Since AI SDK tools don't accept req directly here, we parse from a global accessor set in POST per call.
+    // We'll attach a symbol on globalThis with the latest cookie header for this request lifecycle.
+    execute: async () => {
+      try {
+        // @ts-expect-error custom global for passing cookie header
+        const cookieHeader: string | undefined = globalThis.__AI_CHAT_COOKIE_HEADER__
+        const cookies = cookieHeader || ''
+        const match = cookies.split(/;\s*/).find((c: string) => c.startsWith('cart_items='))
+        if (!match) {
+          return { items: [], count: 0, total: 0, message: 'Your cart is empty' }
+        }
+        const raw = decodeURIComponent(match.replace('cart_items=', ''))
+        const items = JSON.parse(raw || '[]') as Array<{ id: number; name: string; price: number; image: string; quantity: number }>
+        const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
+        return {
+          items,
+          count: items.length,
+          total,
+          message: `You have ${items.length} item${items.length === 1 ? '' : 's'} in your cart (subtotal $${total.toFixed(2)})`
+        }
+      } catch (e) {
+        return { items: [], count: 0, total: 0, message: 'Unable to read cart items' }
+      }
+    }
   })
 }
 
@@ -104,6 +134,9 @@ export async function POST(req: Request) {
     console.log('API Key configured:', process.env.ANTHROPIC_API_KEY ? 'Yes' : 'No')
 
     console.log('Creating streamText...')
+    // Expose cookie header for tools during this request lifecycle
+    // @ts-expect-error attach to globalThis for tool access
+    globalThis.__AI_CHAT_COOKIE_HEADER__ = req.headers.get('cookie') || ''
     const result = await streamText({
       model: anthropic("claude-3-5-sonnet-20241022"),
       system: `You are LeekBot, a helpful and enthusiastic AI assistant for LeekShop, a meme-themed online store that sells leeks and leek-related products.
@@ -115,6 +148,7 @@ You now have access to real product data through specialized tools! You can:
 - Provide personalized product recommendations
 - Check product availability and stock status
 - Help customers find exactly what they're looking for
+- Read the user's cart to assist with checkout
 
 Your personality:
 - Enthusiastic about leeks and the leek spin meme

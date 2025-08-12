@@ -16,6 +16,7 @@ import { PriceRangeResult } from "@/components/tools/PriceRangeResult"
 import { CategoryFilterResult } from "@/components/tools/CategoryFilterResult"
 import { FeaturedProductsResult } from "@/components/tools/FeaturedProductsResult"
 import { RecommendationsResult } from "@/components/tools/RecommendationsResult"
+import { CartItemsResult } from "@/components/tools/CartItemsResult"
 
 // Product result renderer component
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,6 +69,10 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
 
   if (toolName === 'get_recommendations' && output.recommendations && Array.isArray(output.recommendations)) {
     return <RecommendationsResult output={output} shouldAnimate={shouldAnimate} />
+  }
+
+  if (toolName === 'list_cart_items') {
+    return <CartItemsResult output={output} />
   }
 
   // Fallback for other tool types or unrecognized output
