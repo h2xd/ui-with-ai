@@ -178,17 +178,6 @@ export const products: Product[] = [
     tags: ["stress", "wellness", "office", "squeeze"]
   },
   {
-    id: 17,
-    name: "Golden Leek Trophy",
-    price: 199.99,
-    image: "/images/golden-leek.png",
-    description: "The ultimate leek collector's item! Limited edition golden leek trophy.",
-    category: "Premium",
-    inStock: true,
-    featured: true,
-    tags: ["premium", "trophy", "limited", "collector"]
-  },
-  {
     id: 18,
     name: "Leek Chia Pet",
     price: 18.99,
@@ -209,17 +198,6 @@ export const products: Product[] = [
     inStock: true,
     featured: false,
     tags: ["costume", "halloween", "meme", "transform"]
-  },
-  {
-    id: 20,
-    name: "Leek Hat",
-    price: 24.99,
-    image: "/images/leek-hat.png",
-    description: "Become one with the leek! Soft plush hat that makes you look like a walking leek.",
-    category: "Apparel",
-    inStock: true,
-    featured: false,
-    tags: ["hat", "plush", "apparel", "cosplay"]
   },
   {
     id: 21,

@@ -4,7 +4,6 @@ import { HeroSection } from "@/components/hero-section"
 import { FeaturedSection } from "@/components/featured-section"
 import { TestimonialsSection } from "@/components/testimonials-section"
 import { NewsletterSection } from "@/components/newsletter-section"
-import { Footer } from "@/components/footer"
 
 export default function HomePage() {
   return (
@@ -17,7 +16,6 @@ export default function HomePage() {
         <TestimonialsSection />
         <NewsletterSection />
       </main>
-      <Footer />
     </div>
   )
 }

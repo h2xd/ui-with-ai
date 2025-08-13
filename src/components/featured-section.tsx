@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, Zap, Heart, Trophy } from "lucide-react"
+import Image from "next/image"
 
 export function FeaturedSection() {
   const features = [
@@ -32,13 +33,25 @@ export function FeaturedSection() {
 
   return (
     <section className="py-16 px-4 bg-white">
+
+      <div className="flex justify-center items-center mb-12 hover:scale-105">
+        <Image
+          src={"/images/leek-clean.png"}
+          width={400}
+          height={400}
+          alt={"Leek"}
+          className="object-contain animate-spin duration-1000 transition-transform p-2"
+        />
+      </div>
+
+
       <div className="container max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-green-100 text-green-800">Why Choose LeekShop?</Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">The Ultimate Leek Experience</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            We're not just selling leeks - we're delivering joy, memes, and the finest spinning vegetables on the
-            planet.
+            We&apos;re not just selling leeks - we&apos;re delivering joy, memes, and the finest spinning vegetables on
+            the planet.
           </p>
         </div>
 

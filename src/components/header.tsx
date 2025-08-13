@@ -6,17 +6,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ShoppingCart, User, Menu, X, MessageCircle } from 'lucide-react'
 import { useCart } from "@/hooks/use-cart"
+import { useChatContext } from '../contexts/chat-context'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { items } = useCart()
+  const { toggleChat } = useChatContext()
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
-
-  const triggerAIAssistant = () => {
-    const aiButton = document.querySelector("[data-ai-toggle]") as HTMLButtonElement
-    if (aiButton) aiButton.click()
-  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-white/70 dark:bg-neutral-900/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -65,7 +62,7 @@ export function Header() {
             variant="outline"
             size="sm"
             className="flex items-center space-x-2 bg-green-50 border-green-200 hover:bg-green-100"
-            onClick={triggerAIAssistant}
+            onClick={toggleChat}
           >
             <MessageCircle className="h-4 w-4 text-green-600" />
             <span className="text-green-600">AI Assistant</span>
@@ -113,7 +110,7 @@ export function Header() {
                 size="sm"
                 className="flex items-center space-x-2"
                 onClick={() => {
-                  triggerAIAssistant()
+                  toggleChat()
                   setIsMenuOpen(false)
                 }}
               >

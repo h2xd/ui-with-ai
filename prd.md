@@ -242,8 +242,8 @@ Traditional e-commerce platforms lack personality and fail to create emotional c
 - [ ] MCP to add products to the cart
 - [ ] MCP to remove products from the cart
 - [ ] MCP to update the quantity of a product in the cart
-- [ ] MCP to clear the cart
-- [ ] MCP to checkout
+- [x] MCP to clear the cart
+- [x] MCP to checkout
 - [ ] MCP to view the order history
 - [ ] MCP to view the order details
 - [ ] Environment setup documentation

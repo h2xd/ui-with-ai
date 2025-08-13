@@ -4,6 +4,9 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { AIAgent } from '@/components/ai-agent'
+import { Footer } from '../components/footer'
+import { ChatProvider } from '@/contexts/chat-context'
+import { ResizableLayout } from '@/components/resizable-layout'
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -28,12 +31,17 @@ html {
         `}</style>
       </head>
       <body className="min-h-screen bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-black antialiased">
-        <div className="relative">
-          <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(34,197,94,0.08),transparent_50%),radial-gradient(ellipse_at_bottom,rgba(59,130,246,0.06),transparent_50%)]" />
-          {children}
-          <Toaster />
-          <AIAgent />
-        </div>
+        <ChatProvider>
+          <div className="relative h-screen">
+            <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(34,197,94,0.08),transparent_50%),radial-gradient(ellipse_at_bottom,rgba(59,130,246,0.06),transparent_50%)]" />
+            <ResizableLayout>
+              {children}
+              <Footer />
+            </ResizableLayout>
+            <Toaster />
+            <AIAgent />
+          </div>
+        </ChatProvider>
       </body>
     </html>
   )
