@@ -1,6 +1,10 @@
 import { Header } from "@/components/header"
 import { ProductGrid } from "@/components/product-grid"
 import { HeroSection } from "@/components/hero-section"
+import { FeaturedSection } from "@/components/featured-section"
+import { TestimonialsSection } from "@/components/testimonials-section"
+import { NewsletterSection } from "@/components/newsletter-section"
+import { Footer } from "@/components/footer"
 import { AIAgent } from "@/components/ai-agent"
 
 export default function HomePage() {
@@ -9,8 +13,12 @@ export default function HomePage() {
       <Header />
       <main>
         <HeroSection />
+        <FeaturedSection />
         <ProductGrid />
+        <TestimonialsSection />
+        <NewsletterSection />
       </main>
+      <Footer />
       <AIAgent />
     </div>
   )
