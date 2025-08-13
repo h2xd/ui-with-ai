@@ -17,10 +17,13 @@ import { CategoryFilterResult } from "@/components/tools/CategoryFilterResult"
 import { FeaturedProductsResult } from "@/components/tools/FeaturedProductsResult"
 import { RecommendationsResult } from "@/components/tools/RecommendationsResult"
 import { CartItemsResult } from "@/components/tools/CartItemsResult"
+import { NavigationCard } from "@/components/tools/NavigationCard"
+import { CheckoutWarningCard } from "@/components/tools/CheckoutWarningCard"
+import { CheckoutFormFillCard } from "@/components/tools/CheckoutFormFillCard"
 
 // Product result renderer component
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ProductResultRenderer({ output, toolName }: { output: any; toolName: string }) {
+function ProductResultRenderer({ output, toolName, onNavigationComplete }: { output: any; toolName: string; onNavigationComplete?: () => void }) {
   const [hasAnimated, setHasAnimated] = useState(false)
   useEffect(() => {
     if (!hasAnimated) setHasAnimated(true)
@@ -75,6 +78,28 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
     return <CartItemsResult output={output} />
   }
 
+  if (toolName === 'navigate_to_page') {
+    if (output.isCheckout) {
+      return <CheckoutWarningCard output={output} onNavigationComplete={onNavigationComplete} />
+    }
+    return <NavigationCard output={output} onNavigationComplete={onNavigationComplete} />
+  }
+
+  if (toolName === 'fill_checkout_form') {
+    const handleFillForm = (formData: any) => {
+      console.log('handleFillForm called with:', formData)
+      // Call the global function exposed by the checkout page
+      if (typeof window !== 'undefined' && (window as any).fillCheckoutForm) {
+        console.log('Calling window.fillCheckoutForm with:', formData)
+        ;(window as any).fillCheckoutForm(formData)
+      } else {
+        console.log('window.fillCheckoutForm not found')
+      }
+    }
+    
+    return <CheckoutFormFillCard output={output} onFillForm={handleFillForm} />
+  }
+
   // Fallback for other tool types or unrecognized output
   return (
     <div className="space-y-2">
@@ -95,7 +120,7 @@ function ProductResultRenderer({ output, toolName }: { output: any; toolName: st
 
 // Tool invocation renderer for AI SDK v4
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ToolInvocationRenderer({ toolInvocation }: { toolInvocation: any; index: number }) {
+function ToolInvocationRenderer({ toolInvocation, onNavigationComplete }: { toolInvocation: any; index: number; onNavigationComplete?: () => void }) {
 
   const toolName = toolInvocation.toolName || 'unknown'
   const result = toolInvocation.result
@@ -136,7 +161,7 @@ function ToolInvocationRenderer({ toolInvocation }: { toolInvocation: any; index
 
       {/* Show result if available */}
       {result && (
-        <ProductResultRenderer output={result} toolName={toolName} />
+        <ProductResultRenderer output={result} toolName={toolName} onNavigationComplete={onNavigationComplete} />
       )}
     </>
   )
@@ -144,7 +169,7 @@ function ToolInvocationRenderer({ toolInvocation }: { toolInvocation: any; index
 
 // Tool annotation component
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ToolAnnotation({ part, index }: { part: any; index: number }) {
+function ToolAnnotation({ part, index, onNavigationComplete }: { part: any; index: number; onNavigationComplete?: () => void }) {
   // Early return if part is undefined or null
   if (!part) {
     return null
@@ -223,7 +248,7 @@ function ToolAnnotation({ part, index }: { part: any; index: number }) {
             {typeof part.output === 'string' ? (
               part.output
             ) : typeof part.output === 'object' && part.output !== null ? (
-              <ProductResultRenderer output={part.output} toolName={toolName} />
+              <ProductResultRenderer output={part.output} toolName={toolName} onNavigationComplete={onNavigationComplete} />
             ) : (
               String(part.output)
             )}
@@ -246,6 +271,12 @@ function ToolAnnotation({ part, index }: { part: any; index: number }) {
 
 export function AIAgent() {
   const [isOpen, setIsOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState('')
+  const [hasShownCheckoutMessage, setHasShownCheckoutMessage] = useState(false)
+
+  const handleNavigationComplete = () => {
+    setIsOpen(false)
+  }
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -255,7 +286,8 @@ export function AIAgent() {
     handleInputChange,
     handleSubmit,
     isLoading,
-    error
+    error,
+    append
   } = useChat({
     api: "/api/chat",
     initialMessages: [
@@ -272,6 +304,39 @@ export function AIAgent() {
       console.error('Chat error:', error)
     }
   })
+
+  // Detect current page and show checkout message when appropriate
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname
+      setCurrentPage(pathname)
+      
+      // If user opens chat on checkout page and hasn't seen the message yet
+      if (pathname === '/checkout' && isOpen && !hasShownCheckoutMessage) {
+        setHasShownCheckoutMessage(true)
+        
+        // Add helpful message about checkout form filling
+        setTimeout(() => {
+          append({
+            role: 'assistant',
+            content: '💡 I can help you fill out this checkout form quickly! Just ask me to "fill my checkout information" and I\'ll gather all the details for you.'
+          })
+        }, 1000)
+      }
+      
+      // Reset message flag when leaving checkout page
+      if (pathname !== '/checkout') {
+        setHasShownCheckoutMessage(false)
+      }
+    }
+  }, [isOpen, hasShownCheckoutMessage, append])
+
+  // Reset checkout message when chat is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setHasShownCheckoutMessage(false)
+    }
+  }, [isOpen])
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -351,7 +416,7 @@ export function AIAgent() {
 
                       // Tool annotations - handle all tool types
                       if (part && part.type && part.type.startsWith('tool-')) {
-                        return <ToolAnnotation key={index} part={part} index={index} />
+                        return <ToolAnnotation key={index} part={part} index={index} onNavigationComplete={handleNavigationComplete} />
                       }
 
                       return null
@@ -365,7 +430,7 @@ export function AIAgent() {
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(message as any).toolInvocations?.map((toolInvocation: any, index: number) => (
                       <div key={`tool-${index}`} className="my-2">
-                        <ToolInvocationRenderer toolInvocation={toolInvocation} index={index} />
+                        <ToolInvocationRenderer toolInvocation={toolInvocation} index={index} onNavigationComplete={handleNavigationComplete} />
                       </div>
                     ))}
 

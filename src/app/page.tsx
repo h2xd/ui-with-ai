@@ -5,7 +5,6 @@ import { FeaturedSection } from "@/components/featured-section"
 import { TestimonialsSection } from "@/components/testimonials-section"
 import { NewsletterSection } from "@/components/newsletter-section"
 import { Footer } from "@/components/footer"
-import { AIAgent } from "@/components/ai-agent"
 
 export default function HomePage() {
   return (
@@ -19,7 +18,6 @@ export default function HomePage() {
         <NewsletterSection />
       </main>
       <Footer />
-      <AIAgent />
     </div>
   )
 }

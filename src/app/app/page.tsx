@@ -1,7 +1,6 @@
 import { Header } from "@/components/header"
 import { ProductGrid } from "@/components/product-grid"
 import { HeroSection } from "@/components/hero-section"
-import { AIAgent } from "@/components/ai-agent"
 
 export default function HomePage() {
   return (
@@ -11,7 +10,6 @@ export default function HomePage() {
         <HeroSection />
         <ProductGrid />
       </main>
-      <AIAgent />
     </div>
   )
 }

@@ -122,6 +122,107 @@ const aiSdkTools = {
         return { items: [], count: 0, total: 0, message: 'Unable to read cart items' }
       }
     }
+  }),
+
+  navigate_to_page: tool({
+    description: "Navigate the user to a specific page in the LeekShop application. Use this when users ask to go to, navigate to, or visit a specific page.",
+    parameters: z.object({
+      page: z.string().describe("The page to navigate to (e.g., 'home', 'shop', 'about', 'contact', 'account', 'cart', 'checkout')")
+    }),
+    execute: async ({ page }) => {
+      const pageMap: Record<string, { route: string; name: string }> = {
+        'home': { route: '/', name: 'Home' },
+        'homepage': { route: '/', name: 'Home' },
+        'main': { route: '/', name: 'Home' },
+        'shop': { route: '/shop', name: 'Shop' },
+        'store': { route: '/shop', name: 'Shop' },
+        'products': { route: '/shop', name: 'Shop' },
+        'browse': { route: '/shop', name: 'Shop' },
+        'about': { route: '/about', name: 'About' },
+        'about us': { route: '/about', name: 'About' },
+        'contact': { route: '/contact', name: 'Contact' },
+        'contact us': { route: '/contact', name: 'Contact' },
+        'account': { route: '/account', name: 'Account' },
+        'profile': { route: '/account', name: 'Account' },
+        'my account': { route: '/account', name: 'Account' },
+        'cart': { route: '/cart', name: 'Cart' },
+        'shopping cart': { route: '/cart', name: 'Cart' },
+        'my cart': { route: '/cart', name: 'Cart' },
+        'checkout': { route: '/checkout', name: 'Checkout' }
+      }
+
+      const normalizedPage = page.toLowerCase().trim()
+      const pageInfo = pageMap[normalizedPage]
+
+      if (!pageInfo) {
+        return {
+          success: false,
+          message: `Sorry, I don't recognize the page "${page}". Available pages are: home, shop, about, contact, account, cart, and checkout.`,
+          availablePages: Object.keys(pageMap).filter((key, index, arr) => arr.indexOf(key) === index)
+        }
+      }
+
+      // Special handling for checkout page
+      if (normalizedPage === 'checkout') {
+        return {
+          success: false,
+          isCheckout: true,
+          message: "To proceed to checkout, you need to view your cart first to review your items.",
+          suggestedAction: "Go to Cart",
+          route: '/cart'
+        }
+      }
+
+      return {
+        success: true,
+        message: `Navigating you to the ${pageInfo.name} page...`,
+        route: pageInfo.route,
+        pageName: pageInfo.name
+      }
+    }
+  }),
+
+  fill_checkout_form: tool({
+    description: "Fill out the checkout form with user's information. Parse the provided information and extract: name (first and last), email, address with city and ZIP, credit card number, CVV, and expiry date. Use this when users provide their checkout information.",
+    parameters: z.object({
+      firstName: z.string().describe("First name for shipping (extract from full name)"),
+      lastName: z.string().describe("Last name for shipping (extract from full name)"),
+      email: z.string().email().describe("Email address"),
+      address: z.string().describe("Street address"),
+      city: z.string().describe("City name"),
+      zip: z.string().describe("ZIP/Postal code"),
+      cardNumber: z.string().describe("Credit card number (remove spaces)"),
+      expiry: z.string().describe("Card expiry date (MM/YY format)"),
+      cvv: z.string().describe("Card CVV code")
+    }),
+    execute: async ({ firstName, lastName, email, address, city, zip, cardNumber, expiry, cvv }) => {
+      console.log('Checkout form tool called with:', { firstName, lastName, email, address, city, zip, cardNumber, expiry, cvv })
+      
+      return {
+        success: true,
+        message: "Checkout form information ready to apply",
+        formData: {
+          shipping: {
+            firstName,
+            lastName,
+            email,
+            address,
+            city,
+            zip
+          },
+          payment: {
+            cardNumber: cardNumber.replace(/\d(?=\d{4})/g, "*"), // Mask card number for display
+            expiry,
+            cvv: cvv.replace(/./g, "*") // Mask CVV for display
+          },
+          rawPayment: {
+            cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces for form filling
+            expiry,
+            cvv
+          }
+        }
+      }
+    }
   })
 }
 
@@ -141,7 +242,7 @@ export async function POST(req: Request) {
       model: anthropic("claude-3-5-sonnet-20241022"),
       system: `You are LeekBot, a helpful and enthusiastic AI assistant for LeekShop, a meme-themed online store that sells leeks and leek-related products.
 
-You now have access to real product data through specialized tools! You can:
+You now have access to real product data, navigation tools, and checkout assistance! You can:
 - Search and list all products with various filters
 - Get detailed product information by ID
 - Find products by category, price range, or availability
@@ -149,6 +250,8 @@ You now have access to real product data through specialized tools! You can:
 - Check product availability and stock status
 - Help customers find exactly what they're looking for
 - Read the user's cart to assist with checkout
+- Navigate users to different pages in the LeekShop (home, shop, about, contact, account, cart, checkout)
+- Help fill out checkout forms with user information (only available on checkout page)
 
 Your personality:
 - Enthusiastic about leeks and the leek spin meme
@@ -169,6 +272,20 @@ You can help customers with:
 - Order assistance with actual products
 
 When customers ask about products, use the available tools to provide accurate, real-time information. Always be helpful and guide customers to find the perfect leek products for their needs!
+
+For navigation requests (like "take me to the shop", "go to cart", "navigate to about"), use the navigate_to_page tool to help users navigate around LeekShop.
+
+When users are on the checkout page, proactively mention that you can help fill out their checkout form quickly. Look for phrases like "I'm on checkout", "checkout page", or when they ask for checkout help, and offer: "I can help you fill out this checkout form quickly! Just ask me to fill your checkout information and I'll gather all the details."
+
+For checkout form assistance, use the fill_checkout_form tool when users provide their checkout information. Parse the provided information carefully:
+- Extract first and last name from full names
+- Parse addresses with street, city, and ZIP code
+- Clean up card numbers by removing spaces
+- Convert dates to MM/YY format
+- Extract CVV codes
+
+Example: If user provides "Andreas Böttcher, Haustraße 2 - 22088 Hamburg, 1234 5442 1225 2298, 679, 06/27, a.schuwdwdw@gmail.com"
+Parse as: firstName: "Andreas", lastName: "Böttcher", address: "Haustraße 2", city: "Hamburg", zip: "22088", cardNumber: "1234544212252298", cvv: "679", expiry: "06/27", email: "a.schuwdwdw@gmail.com"
 
 Keep responses concise and friendly. If asked about products not related to leeks, gently redirect to leek products while being helpful.`,
       messages,
