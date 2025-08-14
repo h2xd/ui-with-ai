@@ -26,7 +26,7 @@ export function ProductDetailsCard({ product }: { product: any }) {
   }
 
   return (
-    <div className="bg-white border border-green-200 rounded-lg p-3 shadow-sm">
+    <div className="rounded-lg p-3">
       <div className="flex items-start gap-3">
         <div className="relative w-20 h-20 rounded-md overflow-hidden bg-muted/30 flex-shrink-0">
           <Image src={product.image || "/placeholder.svg"} alt={product.name} fill sizes="80px" className="object-contain p-1" />
@@ -61,7 +61,7 @@ export function ProductDetailsCard({ product }: { product: any }) {
             </span>
           </div>
 
-          <div className="mt-3">
+          <div className="mt-2">
             <Button
               size="sm"
               className="h-8 px-3 bg-green-600 hover:bg-green-700"
@@ -73,11 +73,11 @@ export function ProductDetailsCard({ product }: { product: any }) {
           </div>
 
           {product.tags && product.tags.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="mt-3 pt-3">
               <div className="text-xs text-gray-500 mb-1">Tags:</div>
               <div className="flex gap-1 flex-wrap">
                 {product.tags.map((tag: string, tagIndex: number) => (
-                  <span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-[10px]">
+                  <span key={tagIndex} className="px-2 py-1 bg-muted/50 text-gray-600 rounded text-[10px]">
                     #{tag}
                   </span>
                 ))}

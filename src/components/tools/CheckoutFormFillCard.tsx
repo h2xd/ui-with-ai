@@ -54,12 +54,12 @@ export function CheckoutFormFillCard({ output, onFillForm }: CheckoutFormFillCar
 
   const handleFillForm = () => {
     setIsFilling(true)
-    
+
     // Send the form data to the parent component
     if (onFillForm && editedData) {
       onFillForm(editedData)
     }
-    
+
     // Simulate form filling animation
     setTimeout(() => {
       setIsFilling(false)
@@ -68,7 +68,7 @@ export function CheckoutFormFillCard({ output, onFillForm }: CheckoutFormFillCar
 
   const handleInputChange = (section: 'shipping' | 'rawPayment', field: string, value: string) => {
     if (!editedData) return
-    
+
     setEditedData({
       ...editedData,
       [section]: {
@@ -92,24 +92,24 @@ export function CheckoutFormFillCard({ output, onFillForm }: CheckoutFormFillCar
   }
 
   return (
-    <div className="space-y-4 animate-in slide-in-from-bottom-4 fade-in-0 duration-500">
+    <div className="space-y-4 rounded-lg p-3 bg-white shadow-md animate-in slide-in-from-bottom-4 fade-in-0 duration-500">
       <div className="flex items-center gap-2 text-green-800 font-medium">
         <CheckCircle className="w-5 h-5 text-green-600" />
         <span>{output.message}</span>
       </div>
 
-      <Card className="border-green-200">
-        <CardHeader className="pb-3">
+      <Card className="shadow-none border-0">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-green-900 flex items-center gap-2">
               <span className="text-lg">📋</span>
               Checkout Form Preview
             </CardTitle>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={() => setIsEditing(!isEditing)}
-              className="text-green-700 border-green-300 hover:bg-green-50"
+              className="text-green-700 hover:bg-muted/50"
             >
               <Edit className="w-4 h-4 mr-1" />
               {isEditing ? 'Save' : 'Edit'}
@@ -117,15 +117,15 @@ export function CheckoutFormFillCard({ output, onFillForm }: CheckoutFormFillCar
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {/* Shipping Information */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-green-800">
               <Truck className="w-4 h-4" />
               Shipping Information
             </div>
-            
-            <div className="grid grid-cols-2 gap-3">
+
+            <div className="grid grid-cols-2 gap-2">
               <div>
                 <Label className="text-xs text-gray-600">First Name</Label>
                 {isEditing ? (
@@ -178,7 +178,7 @@ export function CheckoutFormFillCard({ output, onFillForm }: CheckoutFormFillCar
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <div>
                 <Label className="text-xs text-gray-600">City</Label>
                 {isEditing ? (
@@ -206,7 +206,7 @@ export function CheckoutFormFillCard({ output, onFillForm }: CheckoutFormFillCar
             </div>
           </div>
 
-          <Separator />
+          <Separator className="opacity-30" />
 
           {/* Payment Information */}
           <div className="space-y-3">
@@ -259,7 +259,7 @@ export function CheckoutFormFillCard({ output, onFillForm }: CheckoutFormFillCar
             </div>
           </div>
 
-          <Separator />
+          <Separator className="opacity-30" />
 
           {/* Fill Form Button */}
           <Button
