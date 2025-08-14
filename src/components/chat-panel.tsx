@@ -20,6 +20,7 @@ import { CartItemsResult } from "@/components/tools/CartItemsResult"
 import { NavigationCard } from "@/components/tools/NavigationCard"
 import { CheckoutWarningCard } from "@/components/tools/CheckoutWarningCard"
 import { CheckoutFormFillCard } from "@/components/tools/CheckoutFormFillCard"
+import Image from "next/image"
 
 // Product result renderer component
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -316,8 +317,8 @@ export function ChatPanel() {
             <p className="text-sm text-gray-600">Your friendly leek shopping companion</p>
           </div>
         </div>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="icon"
           onClick={() => setIsOpen(false)}
           className="h-8 w-8 hover:bg-gray-100"
@@ -422,7 +423,14 @@ export function ChatPanel() {
              </div>
              <div className="bg-white/80 backdrop-blur border border-border/60 p-3 rounded-2xl shadow-sm">
                <div className="flex items-center gap-2 text-sm text-gray-700">
-                 <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                  {/* <Loader2 className="w-4 h-4 animate-spin text-emerald-600" /> */}
+                  <Image
+                    src={"/images/leek-clean.png"}
+                    width={32}
+                    height={32}
+                    alt={"Leek"}
+                    className="object-contain animate-spin duration-1000 transition-transform p-2"
+                  />
                  Leeki is thinking...
                </div>
              </div>

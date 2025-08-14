@@ -68,7 +68,7 @@ export function NavigationCard({ output }: NavigationCardProps) {
 
   return (
     <div className="space-y-4 rounded-lg p-3 bg-white shadow-md animate-in slide-in-from-bottom-4 fade-in-0 duration-500">
-      <div className="flex items-center gap-2 text-green-800 font-medium">
+      {/* <div className="flex items-center gap-2 text-green-800 font-medium">
         <CheckCircle className="w-5 h-5 text-green-600" />
         <span>
           {isAlreadyOnPage
@@ -76,7 +76,7 @@ export function NavigationCard({ output }: NavigationCardProps) {
             : output.message
           }
         </span>
-      </div>
+      </div> */}
 
       <div className="rounded-xl">
         <div className="flex items-center justify-between">
@@ -105,7 +105,7 @@ export function NavigationCard({ output }: NavigationCardProps) {
               onClick={handleNavigation}
               disabled={isNavigating || hasNavigated}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-white ml-2"
             >
               {isNavigating ? (
                 <div className="flex items-center gap-2">
@@ -127,20 +127,12 @@ export function NavigationCard({ output }: NavigationCardProps) {
           )}
 
           {isAlreadyOnPage && (
-            <div className="flex items-center gap-2 text-green-600">
+            <div className="flex items-center gap-2 text-green-600 ml-2">
               <CheckCircle className="w-4 h-4" />
               <span className="text-sm font-medium">You&apos;re here!</span>
             </div>
           )}
         </div>
-
-        {isNavigating && (
-          <div className="mt-3 flex items-center gap-2 text-sm text-green-700">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Navigating to {output.pageName}...</span>
-          </div>
-        )}
-
       </div>
     </div>
   )
