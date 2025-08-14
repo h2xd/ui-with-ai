@@ -309,13 +309,7 @@ export function ChatPanel() {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border/60 bg-white/80 backdrop-blur">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-emerald-600 shadow ring-2 ring-white/70 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">🤖 🥬 Leeki</h2>
-            <p className="text-sm text-gray-600">Your friendly leek shopping companion</p>
-          </div>
+          <div className="text-lg font-semibold text-gray-900">Leeki der Lauchbot</div>
         </div>
         <Button
           variant="ghost"
