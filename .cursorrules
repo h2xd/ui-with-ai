@@ -1,0 +1,9 @@
+Conventional Commits
+
+- Use v1.0.0: https://www.conventionalcommits.org/en/v1.0.0/
+- Format: <type>(<scope>)!: <summary>
+- Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+- Scopes: app, components, lib, mcp, ui, hooks, api
+- Breaking: add ! or `BREAKING CHANGE:` footer
+- PR titles must follow the same format
+- Try to avoid a body and make a short headline
