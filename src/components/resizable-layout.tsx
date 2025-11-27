@@ -57,7 +57,7 @@ export function ResizableLayout({ children }: ResizableLayoutProps) {
   // On mobile, use a simpler overlay approach
   if (isMobile) {
     return (
-      <div className="h-full w-full relative">
+      <div className="h-full w-full fixed">
         <div className="h-full overflow-auto">
           {children}
         </div>
